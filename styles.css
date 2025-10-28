@@ -1,0 +1,326 @@
+:root{
+  --bg-start:#c6efad; --bg-end:#95d36c;
+  --ink:#1f2937; --muted:#6b7280;
+  --accent:#c2ce5a; --danger:#e53935;
+  --shadow:0 8px 20px rgba(0,0,0,.06);
+  --radius-lg:14px; --radius-md:10px;
+}
+
+*{box-sizing:border-box}
+html,body,#root{height:100%}
+body{
+  margin:0; color:var(--ink);
+  font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial;
+  background:linear-gradient(180deg,var(--bg-start),var(--bg-end));
+}
+
+/* Shell */
+.page-wrap{min-height:100%;display:grid;grid-template-rows:auto 1fr auto;gap:18px;padding:14px;}
+.topbar{display:flex;align-items:center;justify-content:space-between;background:linear-gradient(180deg,#f3f6f3,#e9eeea);border-radius:14px;padding:14px 20px;box-shadow:var(--shadow)}
+.topbar-left{display:flex;align-items:center;gap:16px}
+.logo{width:72px;height:36px;display:grid;place-items:center;font-weight:700;background:#fff;border-radius:8px;border:1px solid #e5e7eb}
+.product-title{font-weight:600;opacity:.85}
+.topnav{display:flex;align-items:center;gap:26px}
+.topnav a{text-decoration:none;color:var(--ink);font-weight:600}
+.btn{border:none;padding:10px 18px;border-radius:999px;background:#d4d8d2;cursor:pointer;font-weight:600}
+.login-btn{background:var(--accent)}
+
+.content-shell{display:grid;grid-template-columns:300px 1fr;gap:20px}
+
+/* Sidebar */
+.sidebar{background:linear-gradient(180deg,#f0f4f1,#e6eee6);border-radius:14px;padding:16px;box-shadow:var(--shadow)}
+.profile-card{background:#f3f6f4;border-radius:10px;padding:16px 14px;display:grid;grid-template-columns:70px 1fr;gap:12px;align-items:center;margin-bottom:16px}
+.avatar{width:70px;height:70px;border-radius:50%;background:
+  radial-gradient(circle at 35% 40%,#cfe7ff 0 35%,transparent 36%),
+  radial-gradient(circle at 55% 65%,#a9d18e 0 38%,transparent 39%),
+  #e5f1ff;border:1px solid #d6dde2}
+.profile-line{margin:4px 0}
+
+.side-nav{display:grid;gap:8px;margin-top:8px}
+.side-nav .item{display:block;padding:10px 12px;border-radius:6px;text-decoration:none;color:var(--ink);font-weight:700}
+.side-nav .item.active{background:#cdd0d4}
+
+/* Main content */
+.main-panel{display:grid}
+.card{background:linear-gradient(180deg,#eef1ee,#e7eeea);border-radius:14px;box-shadow:var(--shadow);padding:16px;min-height:520px}
+.card-centered{display:grid;place-items:center}
+.welcome{margin:8px 6px 16px;font-size:1.4rem}
+.section-title{margin:6px 8px 16px;font-size:1.35rem;font-weight:800}
+.section-title.centered{text-align:center}
+.placeholder-panel{background:#cfd3d5;border-radius:12px;height:320px;margin:0 6px 24px;opacity:.75;border:1px solid #c8ccce}
+.actions{display:flex;gap:22px;justify-content:center;padding-bottom:10px}
+.btn.pill{background:#bfc3c5;border-radius:16px;padding:12px 20px;min-width:180px;box-shadow:0 2px 0 rgba(0,0,0,.1) inset}
+
+/* Tables */
+.table-wrap{background:#eceff1;border-radius:12px;border:1px solid #d2d6da;overflow:hidden}
+.table-wrap.scrolly{max-height:360px;overflow:auto}
+.table{width:100%;border-collapse:collapse}
+.table thead th{text-align:left;background:#e1e4e7;padding:10px;border-bottom:2px solid #cbd0d4;font-weight:800}
+.table tbody td{height:60px;border-top:1px solid #cfd3d5;padding:8px}
+
+/* Notes under Applications */
+.list-actions{margin:10px 6px 0;display:grid;gap:4px}
+
+/* Search bar (Members) */
+.search-bar{width:min(520px,92%);height:44px;margin:0 auto 14px;display:grid;grid-template-columns:1fr 44px;align-items:center;background:#f1f3f4;border:2px solid #3f3f3f;border-radius:999px;padding:0 8px}
+.search-bar input{border:none;outline:none;background:transparent;padding:0 10px;font-size:1rem}
+.search-icon{display:grid;place-items:center}
+
+/* Events */
+.event-row{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;padding:0 6px 18px}
+.event-card{background:#d7dadc;border-radius:12px;padding:14px;border:1px solid #c7cbcf;text-align:center}
+.event-title{font-weight:800;margin-bottom:8px}
+.event-line{margin:6px 0}
+
+/* Profile form */
+.divider{height:2px;background:#bfc3c5;margin:8px 0 16px;border-radius:2px}
+.form-grid{display:grid;grid-template-columns:320px 1fr;gap:10px 16px;padding:0 8px 16px}
+.form-grid label{display:flex;align-items:center;font-weight:700}
+.form-grid input,.form-grid select{height:40px;border-radius:8px;border:1px solid #cfd3d5;padding:0 10px;background:#f7f8f9}
+
+/* Logout */
+.big-text{font-size:1.8rem;font-weight:800;text-align:center}
+.logout-actions{display:flex;gap:30px;margin-top:28px}
+.logout-yes{background:#e25b5b;color:#fff;border:none;padding:12px 22px;border-radius:18px;font-weight:800;cursor:pointer}
+.logout-cancel{background:#000;color:#fff;border:none;padding:12px 22px;border-radius:18px;font-weight:800;cursor:pointer}
+
+/* Footer */
+.footer{display:grid}
+.footer-inner{height:64px;background:linear-gradient(180deg,#e9ece9,#d9dedb);border-radius:14px;display:flex;align-items:center;gap:12px;padding-left:20px;box-shadow:var(--shadow)}
+.footer .brand{font-weight:800}
+.footer .copy{color:#e14f4f;font-weight:700;margin-left:6px}
+
+/* Responsive */
+@media (max-width:1100px){ .event-row{grid-template-columns:1fr} }
+@media (max-width:980px){
+  .content-shell{grid-template-columns:1fr}
+  .sidebar{order:2}
+  .main-panel{order:1}
+  .actions{flex-direction:column;align-items:stretch}
+  .btn.pill{min-width:0}
+  .form-grid{grid-template-columns:1fr}
+}
+/* Sidebar avatar shows uploaded photo if present */
+.avatar {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  border: 1px solid #d6dde2;
+  overflow: hidden;               /* ensure circle crop */
+  background:
+    radial-gradient(circle at 35% 40%, #cfe7ff 0 35%, transparent 36%),
+    radial-gradient(circle at 55% 65%, #a9d18e 0 38%, transparent 39%),
+    #e5f1ff;                      /* fallback if no photo yet */
+}
+.avatar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Upload preview inside Profile Settings */
+.upload-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.avatar-preview {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid #cfd3d5;
+}
+.upload-col { display: grid; gap: 8px; }
+.upload-row { display: flex; align-items: center; gap: 12px; }
+.avatar-preview {
+  width: 56px; height: 56px; border-radius: 50%;
+  object-fit: cover; border: 1px solid #cfd3d5;
+}
+.help { font-size: 0.9rem; color: #5f6470; }
+.error {
+  font-size: 0.95rem;
+  color: #b00020;
+  background: #fdeaea;
+  border: 1px solid #f5b8b8;
+  padding: 6px 10px; border-radius: 8px;
+}
+.upload-actions { display: flex; gap: 10px; }
+/* Events */
+.events-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 18px;
+  margin: 14px 0 10px;
+}
+.event-card {
+  background: #e9ecef;
+  border: 1px solid #cfd8dc;
+  border-radius: 12px;
+  padding: 14px 16px;
+}
+.event-title {
+  text-align: center;
+  font-weight: 700;
+  margin: 4px 0 10px;
+}
+.event-row { margin: 4px 0; }
+.event-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-top: 12px;
+}
+.events-toolbar {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+/* Modal */
+.modal-backdrop {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,.35);
+  display: grid; place-items: center;
+  z-index: 40;
+}
+.modal-card {
+  width: min(560px, 92vw);
+  background: #fff;
+  border-radius: 14px;
+  border: 1px solid #d9dee2;
+  box-shadow: 0 10px 28px rgba(0,0,0,.18);
+}
+.modal-head {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 16px; border-bottom: 1px solid #e7ebef;
+}
+.modal-body { padding: 16px; }
+.modal-close {
+  border: none; background: transparent; font-size: 22px; line-height: 1;
+  cursor: pointer; padding: 4px 8px;
+}
+
+/* Reuse your form grid look */
+.form-grid {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  gap: 12px 14px;
+  align-items: center;
+}
+.form-grid input,
+.form-grid textarea,
+.form-grid select {
+  padding: 10px 12px;
+  border: 1px solid #cfd8dc;
+  border-radius: 10px;
+  outline: none;
+}
+
+.actions { display: flex; gap: 12px; margin-top: 12px; }
+.btn.pill { border-radius: 999px; padding: 10px 16px; border: 0; background: #c7ccd1; cursor: pointer; }
+.btn.pill:hover { filter: brightness(.96); }
+/* --- Centered Modal Buttons --- */
+.actions-centered {
+  display: flex;
+  justify-content: center;  /* Centers buttons horizontally */
+  align-items: center;
+  gap: 16px;                /* Spacing between buttons */
+  margin-top: 24px;
+}
+
+/* Pill-style buttons */
+.btn-pill {
+  background-color: #c7ccd1;
+  border: none;
+  border-radius: 25px;
+  padding: 10px 22px;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.btn-pill:hover {
+  background-color: #b0b5ba;
+}
+
+/* Cancel button */
+.btn-pill.cancel {
+  background-color: #e0e0e0;
+  
+}
+
+.btn-pill.cancel:hover {
+  background-color: #d2d2d2;
+}
+/* Applications table */
+.table-wrap {
+  border: 1px solid #d6dde2;
+  border-radius: 8px;
+  background: #f1f5f9;
+  overflow: hidden;
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.data-table thead th {
+  text-align: left;
+  background: #e7edf3;
+  color: #111827;
+  padding: 10px 12px;
+  border-bottom: 1px solid #d6dde2;
+}
+
+.data-table tbody td {
+  padding: 10px 12px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.data-table tbody tr:hover {
+  background: #f6fafc;
+  cursor: pointer;
+}
+
+.data-table tbody tr.is-selected {
+  background: #45ec7d;
+}
+
+.row-actions {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.btn-xs {
+  padding: 6px 10px;
+  border: 1px solid #cfd8dc;
+  background: #e5e9ee;
+  border-radius: 999px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.apps-footer-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  padding: 12px 0;
+}
+
+/* "Choose file" disguised as button */
+.btn.pill.filelike {
+  position: relative;
+  overflow: hidden;
+}
+
+/* Reuse your modal/button CSS from earlier:
+   .modal-backdrop, .modal-card, .modal-head, .modal-body,
+   .modal-close, .actions-centered, .btn-pill, .btn-pill.cancel
+*/
