@@ -324,3 +324,442 @@ body{
    .modal-backdrop, .modal-card, .modal-head, .modal-body,
    .modal-close, .actions-centered, .btn-pill, .btn-pill.cancel
 */
+/* Make the app fill the viewport height */
+html, body, #root {
+  height: 100%;
+}
+
+/* Page wrapper: column layout and full height */
+.page-wrap {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; /* full screen height */
+}
+
+/* The main content area should take remaining space */
+.content-shell {
+  flex: 1;                 /* grow to fill until the footer */
+  display: grid;           /* keep your grid/columns if you used them */
+  grid-template-columns: 260px 1fr; /* sidebar + main-panel (adjust to your sizes) */
+  gap: 16px;               /* optional */
+}
+
+/* Ensure the footer stays at the bottom but is always visible */
+.footer {
+  margin-top: 0;           /* prevent accidental extra space */
+}
+
+/* Optional: when the topbar is hidden, remove any top offset */
+.page-wrap.no-topbar .content-shell {
+  margin-top: 0;
+  /* If you had padding to compensate for header, reduce here: */
+  /* padding-top: 0; */
+}
+
+/* Optional (if you want the main panel to always have some room) */
+.main-panel {
+  min-height: 0;           /* allow flex/grid to control height */
+  overflow: auto;          /* scroll inside when content is long */
+}
+/* Clickable rows */
+.table tr.clickable {
+  cursor: pointer;
+}
+
+/* Selected row highlight */
+.table tr.row-selected > td {
+  background: #d8f8df !important;   /* light green fill */
+}
+
+/* Optional clearer outline on selected row */
+.table tr.row-selected {
+  outline: 2px solid #7ad87a;       /* green edge */
+  outline-offset: -2px;
+}
+/* Pagination bar */
+.pager-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 0;
+}
+
+.pager-right {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.pager-btn {
+  border: 1px solid #cfd8dc;
+  background: #e5e9ee;
+  border-radius: 999px;
+  padding: 6px 10px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.pager-btn:hover:not([disabled]) {
+  filter: brightness(0.97);
+}
+
+.pager-btn[disabled] {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.pager-btn.is-current {
+  background: #d8f8df;   /* light green like selected row */
+  border-color: #7ad87a;
+  font-weight: 600;
+}
+
+/* Keep from earlier step (selected row highlight) */
+.table tr.clickable { cursor: pointer; }
+.table tr.row-selected > td { background: #d8f8df !important; }
+.table tr.row-selected { outline: 2px solid #7ad87a; outline-offset: -2px; }
+/* Event images */
+.event-image {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  border-radius: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #cfd8dc;
+}
+/* Grid keeps responsive columns */
+.events-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit, minmax(280px, 1fr));
+  gap:18px;
+  margin:14px 0 10px;
+}
+
+/* Make each card a flex column so buttons stick to bottom */
+.event-card{
+  display:flex;
+  flex-direction:column;
+  background:#e9ecef;
+  border:1px solid #cfd8dc;
+  border-radius:12px;
+  padding:14px 16px;
+  min-height: 360px;           /* optional: ensures consistent height per row */
+}
+
+/* Event image stays consistent height for alignment */
+.event-image{
+  width:100%;
+  height:180px;
+  object-fit:cover;
+  border-radius:10px;
+  margin-bottom:10px;
+  border:1px solid #cfd8dc;
+}
+
+.event-title{ text-align:center; font-weight:700; margin:6px 0 10px; }
+
+/* Body grows to fill extra space */
+.event-body{
+  flex:1;
+  display:grid;
+  gap:6px;
+}
+
+/* Keep rows tidy */
+.event-row{ display:flex; gap:6px; }
+
+/* Actions stay pinned at the bottom due to flex layout */
+.event-actions{
+  display:flex;
+  gap:10px;
+  justify-content:center;
+  margin-top:12px;
+}
+.pager-bar {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.pager-btn {
+  background: #ddd;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.2s;
+}
+
+.pager-btn:hover:not(:disabled) {
+  background: #ccc;
+}
+
+.pager-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+/* ===== Dashboard layout ===== */
+.dash-wrap {
+  display: grid;
+  gap: 18px;
+}
+
+.dash-hero {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  align-items: center;
+  min-height: 170px; /* smoother height for balance */
+  background: linear-gradient(135deg, #f6fff4 0%, #e9f8e4 100%);
+  overflow: hidden;
+}
+
+
+
+.hero-left {
+  padding: 22px 24px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.hero-eyebrow {
+  font-size: 14px;
+  color: #5a6b58;
+  margin: 0 0 4px;
+  font-weight: 600;
+}
+
+.hero-name {
+  margin: 0;
+  font-size: 28px;
+  line-height: 1.15;
+  color: #2a3a29; /* darker green-grey for contrast */
+  font-weight: 800;
+}
+
+.hero-sub {
+  margin: 6px 0 16px;
+  color: #6d7e6a;
+  font-weight: 600;
+}
+
+.hero-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.hero-art {
+  background: radial-gradient(60% 70% at 60% 45%, rgba(137, 206, 120, 0.25), rgba(94, 167, 80, 0.15) 60%, transparent 70%),
+              linear-gradient(180deg, rgba(115, 196, 95, 0.15), rgba(151, 221, 132, 0.05));
+}
+
+/* KPI section */
+.dash-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 18px;
+  margin-top: 4px;
+}
+
+.stat-card {
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 1px 0 rgba(0,0,0,0.03), 0 8px 24px rgba(0,0,0,0.04);
+  padding: 18px 22px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 150px; /* Balanced with hero height */
+}
+
+.stat-title {
+  font-weight: 700;
+  color: #2f422d;
+  margin-bottom: 6px;
+}
+
+.stat-body {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.kpi {
+  font-size: 36px;
+  font-weight: 800;
+  color: #274025;
+  line-height: 1;
+}
+
+.kpi-note {
+  font-size: 13px;
+  color: #6a7d68;
+}
+
+.kpi-block {
+  text-align: center;
+}
+
+@media (max-width: 900px) {
+  .dash-kpi-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+/* Pending apps table */
+.dash-apps {
+  margin-top: 4px;
+  padding: 12px 14px;
+}
+.dash-apps-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.apps-table-wrap { overflow-x: auto; }
+.apps-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: transparent;
+}
+.apps-table thead th {
+  text-align: left;
+  font-size: 12px;
+  color: #6d7e6a;
+  padding: 10px 8px;
+  border-bottom: 1px solid #dfead9;
+}
+.apps-table tbody td {
+  padding: 10px 8px;
+  border-bottom: 1px solid #ecf3e9;
+  color: #2f422d;
+}
+
+.badge {
+  display: inline-block;
+  font-size: 11px;
+  padding: 4px 8px;
+  border-radius: 999px;
+  font-weight: 700;
+}
+.badge-pending {
+  background: #fff9e6;
+  color: #8a6d1f;
+  border: 1px solid #f3e3b2;
+}
+
+.table-foot-note {
+  margin-top: 6px;
+  font-size: 12px;
+  color: #6a7d68;
+}
+
+/* generic card keeps your existing style vibe */
+.card {
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 1px 0 rgba(0,0,0,0.03), 0 8px 24px rgba(0,0,0,0.04);
+}
+
+/* pills already exist, but ensure spacing */
+.btn.pill { white-space: nowrap; }
+
+/* small link style to match your palette */
+.link {
+  color: #2f7b2e;
+  text-decoration: none;
+  font-weight: 600;
+}
+.link:hover { text-decoration: underline; }
+
+/* Empty state */
+.empty-hint {
+  color: #6a7d68;
+  padding: 10px 6px 14px;
+}
+.dash-wrap {
+  display: grid;
+  gap: 4px; /* smaller gap between sections */
+}
+/* Actions row under applications card */
+.dash-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 8px;
+  margin-bottom: 4px;
+}
+
+@media (max-width: 900px) {
+  .dash-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+/* Make the table footer compact */
+.table-foot {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 6px;
+}
+/* Simple 3-col table layout used in Dashboard + Members */
+.table { width: 100%; }
+
+.row {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: 12px;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--line-soft, #e6e6e6);
+}
+
+.row.head {
+  font-weight: 600;
+  background: var(--panel, #f6f6f6);
+  border-radius: 10px;
+}
+
+.col { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.table-head, .table-foot {
+  display: flex; justify-content: space-between; align-items: center;
+}
+
+.pill { padding: 4px 10px; border-radius: 999px; font-size: 12px; }
+.pill-pending  { background: #f4e9c0; color: #7a5f00; }
+.pill-approved { background: #d9f6d9; color: #1c6b1c; }
+
+.muted { opacity: .7; }
+
+.dash-actions {
+  display: flex; gap: 12px; margin-top: 8px; margin-bottom: 4px;
+}
+@media (max-width: 900px) {
+  .row { grid-template-columns: 1fr; }
+  .dash-actions { flex-direction: column; align-items: stretch; }
+}
+.table-actions { text-align: right; }
+
+.btn-link {
+  background: none;
+  border: none;
+  padding: 0;
+  font: inherit;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.btn-link:hover { opacity: .85; }
+.btn-link.danger { color: #8a1c1c; }
+  
