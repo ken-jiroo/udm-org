@@ -80,7 +80,7 @@ export default function ProfileSettings() {
         <label>Password :</label>
         <input type="password" name="password" value={form.password || ""} onChange={onChange} placeholder="Enter password" />
 
-        <label>Organization (Drop down button)</label>
+        <label>Organization </label>
         <select name="organization" value={form.organization || ""} onChange={onChange}>
           <option>CCS</option>
           <option>COE</option>
@@ -91,7 +91,7 @@ export default function ProfileSettings() {
           <option>CBA</option>
         </select>
 
-        <label>Role (Drop down button)</label>
+        <label>Role </label>
         <select name="position" value={form.position || ""} onChange={onChange}>
           <option>Officer</option>
           <option>Member</option>
@@ -99,7 +99,7 @@ export default function ProfileSettings() {
         </select>
 
         {/* Attachment / Photo upload */}
-        <label>Profile Photo (Attachment)</label>
+        <label>Profile Photo </label>
         <div className="upload-col">
           <div className="upload-row">
             <input
