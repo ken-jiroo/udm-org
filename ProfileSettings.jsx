@@ -1,19 +1,41 @@
+// src/pages/ProfileSettings.jsx
 import { useEffect, useRef, useState } from "react";
 import { useProfile } from "../context/ProfileContext.jsx";
 
-const MAX_BYTES = 2 * 1024 * 1024; // 2 MB limit
+const MAX_BYTES = 2 * 1024 * 1024; // 2 MB
 const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif"];
 
 export default function ProfileSettings() {
   const { profile, setProfile } = useProfile();
-  const [form, setForm] = useState(profile);
-  const [preview, setPreview] = useState(profile.avatar || "");
+
+  const normalized = {
+    studentId: profile.studentId || "",
+    name: profile.name || "",
+    username: profile.username || "",
+    password: profile.password || "",
+    yearLevel: profile.yearLevel || "",
+    email: profile.email || "",
+    organization: "CCS", // fixed value, no dropdown
+    faculty: profile.faculty || "College of Computer Studies",
+    position: profile.position || "Officer",
+    avatar: profile.avatar || "",
+  };
+
+  const [form, setForm] = useState(normalized);
+  const [preview, setPreview] = useState(normalized.avatar);
   const [error, setError] = useState("");
   const fileRef = useRef(null);
 
   useEffect(() => {
-    setForm(profile);
-    setPreview(profile.avatar || "");
+    const next = {
+      ...normalized,
+      ...profile,
+      organization: "CCS", // keep fixed
+    };
+    setForm(next);
+    setPreview(next.avatar);
+    setError("");
+    if (fileRef.current) fileRef.current.value = "";
   }, [profile]);
 
   function onChange(e) {
@@ -26,15 +48,11 @@ export default function ProfileSettings() {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // Type check
     if (!ALLOWED_TYPES.includes(file.type)) {
       setError("Please upload a JPG, PNG, WEBP, or GIF image.");
-      // clear input so user can re-pick
       if (fileRef.current) fileRef.current.value = "";
       return;
     }
-
-    // Size check
     if (file.size > MAX_BYTES) {
       setError("Image is too large. Max size is 2 MB.");
       if (fileRef.current) fileRef.current.value = "";
@@ -42,7 +60,7 @@ export default function ProfileSettings() {
     }
 
     const reader = new FileReader();
-    reader.onload = () => setPreview(String(reader.result)); // data URL
+    reader.onload = () => setPreview(String(reader.result));
     reader.readAsDataURL(file);
   }
 
@@ -53,13 +71,25 @@ export default function ProfileSettings() {
   }
 
   function onSave() {
-    if (error) return; // do not save if invalid
-    setProfile({ ...form, avatar: preview });
+    if (error) return;
+    setProfile({
+      ...profile,
+      studentId: form.studentId,
+      name: form.name,
+      username: form.username,
+      password: form.password,
+      yearLevel: form.yearLevel,
+      email: form.email,
+      organization: "CCS", // locked value
+      faculty: form.faculty,
+      position: "Officer",
+      avatar: preview,
+    });
     alert("Profile saved!");
   }
 
   function onCancel() {
-    setForm(profile);
+    setForm({ ...profile, organization: "CCS" });
     setPreview(profile.avatar || "");
     setError("");
     if (fileRef.current) fileRef.current.value = "";
@@ -71,35 +101,76 @@ export default function ProfileSettings() {
       <div className="divider" />
 
       <div className="form-grid">
-        <label>Full Name :</label>
-        <input name="name" value={form.name || ""} onChange={onChange} placeholder="Enter full name" />
+        <label>Student ID</label>
+        <input
+          name="studentId"
+          value={form.studentId}
+          onChange={onChange}
+          placeholder="Enter student ID"
+        />
 
-        <label>Email :</label>
-        <input name="email" value={form.email || ""} onChange={onChange} placeholder="Enter email" />
+        <label>Full Name</label>
+        <input
+          name="name"
+          value={form.name}
+          onChange={onChange}
+          placeholder="Enter full name"
+        />
 
-        <label>Password :</label>
-        <input type="password" name="password" value={form.password || ""} onChange={onChange} placeholder="Enter password" />
+        <label>Username</label>
+        <input
+          name="username"
+          value={form.username}
+          onChange={onChange}
+          placeholder="Enter username"
+        />
 
-        <label>Organization </label>
-        <select name="organization" value={form.organization || ""} onChange={onChange}>
-          <option>CCS</option>
-          <option>COE</option>
-          <option>CHS</option>
-          <option>COL</option>
-          <option>CAS</option>
-          <option>CCJ</option>
-          <option>CBA</option>
+        <label>Password</label>
+        <input
+          type="password"
+          name="password"
+          value={form.password}
+          onChange={onChange}
+          placeholder="Enter password"
+        />
+
+        <label>Year Level</label>
+        <select name="yearLevel" value={form.yearLevel} onChange={onChange}>
+          <option value="">Select year level</option>
+          <option>1st Year</option>
+          <option>2nd Year</option>
+          <option>3rd Year</option>
+          <option>4th Year</option>
         </select>
 
-        <label>Role </label>
-        <select name="position" value={form.position || ""} onChange={onChange}>
-          <option>Officer</option>
-          <option>Member</option>
-          <option>Admin</option>
-        </select>
+        <label>Email</label>
+        <input
+          name="email"
+          value={form.email}
+          onChange={onChange}
+          placeholder="Enter email"
+        />
 
-        {/* Attachment / Photo upload */}
-        <label>Profile Photo </label>
+        <label>Organization</label>
+        <input
+          name="organization"
+          value="CCS"
+          disabled
+          readOnly
+        />
+
+        <label>Faculty</label>
+        <input
+          name="faculty"
+          value={form.faculty}
+          disabled
+          readOnly
+        />
+
+        <label>Role</label>
+        <input value="Officer" disabled readOnly />
+
+        <label>Profile Photo</label>
         <div className="upload-col">
           <div className="upload-row">
             <input
@@ -111,10 +182,7 @@ export default function ProfileSettings() {
             {preview && <img src={preview} alt="Preview" className="avatar-preview" />}
           </div>
 
-          <div className="help">
-            Allowed: JPG, PNG, WEBP, GIF — up to 2 MB.
-          </div>
-
+          <div className="help">Allowed: JPG, PNG, WEBP, GIF — up to 2 MB.</div>
           {error && <div className="error">{error}</div>}
 
           <div className="upload-actions">
@@ -129,7 +197,9 @@ export default function ProfileSettings() {
         <button className="btn pill" onClick={onSave} disabled={Boolean(error)}>
           Save Changes
         </button>
-        <button className="btn pill" onClick={onCancel}>Cancel</button>
+        <button className="btn pill" onClick={onCancel}>
+          Cancel
+        </button>
       </div>
     </div>
   );
