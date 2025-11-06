@@ -43,11 +43,18 @@ export function EventsProvider({ children }) {
     () => ({
       events,
       create(evt) {
-        setEvents((cur) => [{ ...evt, id: crypto.randomUUID() }, ...cur]);
+        setEvents((cur) => [
+    { ...evt, id: crypto.randomUUID(), image: evt.image || "" },
+    ...cur,
+  ]);
       },
       update(id, patch) {
-        setEvents((cur) => cur.map((e) => (e.id === id ? { ...e, ...patch } : e)));
-      },
+  setEvents((cur) =>
+    cur.map((e) =>
+      e.id === id ? { ...e, ...patch, image: patch.image ?? e.image } : e
+    )
+  );
+},
       remove(id) {
         setEvents((cur) => cur.filter((e) => e.id !== id));
       },
