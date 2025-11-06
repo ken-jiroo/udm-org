@@ -14,22 +14,36 @@ export default function Layout() {
     ? "Logout Confirmation"
     : "Officer Dashboard";
 
+  // 👇 NEW: routes where the header should be hidden
+  const hideHeader = [
+    "/dashboard",
+    "/applications",
+    "/members",
+    "/events",
+    "/profile",
+    "/logout",
+    "/goodbye",
+  ].some(prefix => pathname.startsWith(prefix));
+
   return (
-    <div className="page-wrap">
-      <header className="topbar">
-        <div className="topbar-left">
-          <div className="logo">logo</div>
-          <div className="product-title">{pageTitle}</div>
-        </div>
-        <nav className="topnav">
-          <a href="#home">Home</a>
-          <a href="#organization">Organization</a>
-          <a href="#testimonials">Testimonials</a>
-          <button className="btn login-btn" onClick={() => navigate("/dashboard")}>
-            Login
-          </button>
-        </nav>
-      </header>
+    <div className={`page-wrap ${hideHeader ? "no-topbar" : ""}`}>
+      {/* 👇 Wrap header in a conditional */}
+      {!hideHeader && (
+        <header className="topbar">
+          <div className="topbar-left">
+            <div className="logo">logo</div>
+            <div className="product-title">{pageTitle}</div>
+          </div>
+          <nav className="topnav">
+            <a href="#home">Home</a>
+            <a href="#organization">Organization</a>
+            <a href="#testimonials">Testimonials</a>
+            <button className="btn login-btn" onClick={() => navigate("/dashboard")}>
+              Login
+            </button>
+          </nav>
+        </header>
+      )}
 
       <div className="content-shell">
         <aside className="sidebar">
