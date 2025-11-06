@@ -1,87 +1,81 @@
-import { createContext, useContext, useEffect, useMemo, useState } from "react";
+// src/context/ApplicationsContext.jsx
+import { createContext, useContext, useEffect, useState } from "react";
 
 const ApplicationsContext = createContext();
 
-const DATA_VERSION = "apps_v3"; // <- bump this whenever you change SAMPLE_APPS
-
-const SAMPLE_APPS = [
-  {
-    id: crypto.randomUUID(),
-    name: "Angel Libang",
-    studentNo: "23-22-1",
-    email: "angel@cute.com",
-    status: "Pending",               // "Pending" | "Approved" | "Rejected"
-    // A tiny placeholder PNG (data URL). Replace with real uploads later.
-    idAttachment:
-      "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAACXBIWXMAAAsSAAALEgHS3X78AAABFElEQVR4nO3XwQnCMBRE0Ti4d3oQmS7kC1V0bEnrF2pJQY6l3zE6j7yC1n2rEu1w+J8QkAAACAZu6hV2g1X8Q4q7N4J3kV3q7m7sQv2t0Y1Q6C0s8hX9k5wW4h9Ew8o0nC6zI6m0+6y4Q1L4G8e4g0k6y4m0c8p0nC6zI6m0+6y4Q1L4G8e4g0k6y4m0c8p0nC6zI6m0+6y4Q1L4G8e4g0k6y4m0c8p9kqjz4c8k3oAAAAAABJRU5ErkJggg==",
-  },
-  {
-    id: crypto.randomUUID(),
-    name: "John Carlo",
-    studentNo: "23-22-2",
-    email: "Jc@redflag.com",
-    status: "Pending",
-    idAttachment: null, // none (shows a message)
-  },
-  {
-    id: crypto.randomUUID(),
-    name: "Mark Adrian",
-    studentNo: "23-22-3",
-    email: "mark@tahimiklang.com",
-    status: "Approved",
-    idAttachment: null,
-  },
+const SEED = [
+  { id: crypto.randomUUID(), name: "Juan Dela Cruz",  studentNo: "2025-00001", email: "juan@example.com", status: "Pending" },
+  { id: crypto.randomUUID(), name: "Maria Santos",    studentNo: "2025-00002", email: "maria@example.com", status: "Pending" },
+  { id: crypto.randomUUID(), name: "Mark Adrian",     studentNo: "2025-00003", email: "mark@example.com",  status: "Pending" },
+  { id: crypto.randomUUID(), name: "Angela Libang",   studentNo: "2025-00004", email: "angela@example.com",status: "Pending" },
+  { id: crypto.randomUUID(), name: "John Carlo Villanueva", studentNo: "2025-00005", email: "john@example.com", status: "Pending" },
+  { id: crypto.randomUUID(), name: "Ella Mae Cruz",   studentNo: "2025-00006", email: "ella@example.com",  status: "Pending" },
+  { id: crypto.randomUUID(), name: "Ralph Reyes",     studentNo: "2025-00007", email: "ralph@example.com", status: "Pending" },
+  { id: crypto.randomUUID(), name: "Bianca Tolentino",studentNo: "2025-00008", email: "bianca@example.com",status: "Pending" },
+  { id: crypto.randomUUID(), name: "James Tan",       studentNo: "2025-00009", email: "james@example.com", status: "Pending" },
+  { id: crypto.randomUUID(), name: "Sofia Cruz",      studentNo: "2025-00010", email: "sofia@example.com", status: "Pending" },
+  { id: crypto.randomUUID(), name: "Liam Dizon",      studentNo: "2025-00011", email: "liam@example.com",  status: "Pending" },
+  { id: crypto.randomUUID(), name: "Ava Santos",      studentNo: "2025-00012", email: "ava@example.com",   status: "Pending" },
+  { id: crypto.randomUUID(), name: "Noah Garcia",     studentNo: "2025-00013", email: "noah@example.com",  status: "Pending" },
 ];
 
 export function ApplicationsProvider({ children }) {
-  const [applications, setApplications] = useState(() => {
-    const saved = localStorage.getItem("applications");
-    const version = localStorage.getItem("applications_version");
-
-    if (!saved || version !== DATA_VERSION) {
-      // seed with fresh sample + write version
-      localStorage.setItem("applications_version", DATA_VERSION);
-      return SAMPLE_APPS;
-    }
-
-    try {
-      return JSON.parse(saved);
-    } catch {
-      // in case old storage is corrupted
-      localStorage.setItem("applications_version", DATA_VERSION);
-      return SAMPLE_APPS;
-    }
-  });
+  const [apps, setApps] = useState([]);
 
   useEffect(() => {
-    localStorage.setItem("applications", JSON.stringify(applications));
-    localStorage.setItem("applications_version", DATA_VERSION);
-  }, [applications]);
+  const raw = localStorage.getItem("apps");
+  if (raw) {
+    try {
+      const parsed = JSON.parse(raw);
+      // Only accept a non-empty array
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        setApps(parsed);
+        return;
+      }
+    } catch {
+      // fall through to seeding
+    }
+  }
+  // Seed when missing, invalid, or empty
+  setApps(SEED);
+  localStorage.setItem("apps", JSON.stringify(SEED));
+}, []);
 
-  const api = useMemo(
-    () => ({
-      applications,
-      approve(id) {
-        setApplications((list) =>
-          list.map((a) => (a.id === id ? { ...a, status: "Approved" } : a))
-        );
-      },
-      reject(id) {
-        setApplications((list) =>
-          list.map((a) => (a.id === id ? { ...a, status: "Rejected" } : a))
-        );
-      },
-      // optional helper to manually reseed samples
-      resetAll() {
-        setApplications(SAMPLE_APPS);
-        localStorage.setItem("applications_version", DATA_VERSION);
-      },
-    }),
-    [applications]
-  );
+
+ useEffect(() => {
+  if (Array.isArray(apps)) {
+    localStorage.setItem("apps", JSON.stringify(apps));
+  }
+}, [apps]);
+
+
+  function approve(id) {
+    setApps(prev =>
+      prev.map(a => (a.id === id ? { ...a, status: "Approved" } : a))
+    );
+  }
+
+  function reject(id) {
+    setApps(prev =>
+      prev.map(a => (a.id === id ? { ...a, status: "Rejected" } : a))
+    );
+  }
+
+  // Optional: send back to pending
+  function revert(id) {
+    setApps(prev =>
+      prev.map(a => (a.id === id ? { ...a, status: "Pending" } : a))
+    );
+  }
+
+  function remove(id) {
+    setApps(prev => prev.filter(a => a.id !== id));
+  }
 
   return (
-    <ApplicationsContext.Provider value={api}>
+    <ApplicationsContext.Provider
+      value={{ apps, approve, reject, revert, remove }}
+    >
       {children}
     </ApplicationsContext.Provider>
   );
