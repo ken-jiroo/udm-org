@@ -1,196 +1,262 @@
-import { useMemo, useState } from "react";
+// src/pages/Applications.jsx
+import { useEffect, useMemo, useState } from "react";
 import { useApplications } from "../context/ApplicationsContext.jsx";
 
 export default function Applications() {
-  const { applications, approve, reject } = useApplications();
-  const [selected, setSelected] = useState(null);
-  const [viewerOpen, setViewerOpen] = useState(false);
+  const { apps, approve, reject } = useApplications();
 
-  const rows = useMemo(() => applications, [applications]);
+  const [query, setQuery] = useState("");
+  const [selectedId, setSelectedId] = useState(null);
 
-  function onRowClick(id) {
-    setSelected((cur) => (cur === id ? null : id));
-  }
+  // 🔢 Pagination state (default 5 per page)
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(5); // default = 5
 
-  function doApprove() {
-    if (!selected) return alert("Select an application first.");
-    approve(selected);
-  }
+  // Filter by search
+  const filtered = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    if (!q) return apps;
+    return apps.filter((a) => {
+      return (
+        (a.name || "").toLowerCase().includes(q) ||
+        (a.studentNo || "").toLowerCase().includes(q) ||
+        (a.email || "").toLowerCase().includes(q) ||
+        (a.status || "").toLowerCase().includes(q)
+      );
+    });
+  }, [apps, query]);
 
-  function doReject() {
-    if (!selected) return alert("Select an application first.");
-    reject(selected);
-  }
+  // Reset to page 1 when search or pageSize changes
+  useEffect(() => {
+    setPage(1);
+  }, [query, pageSize]);
 
-  function openViewer() {
-    if (!selected) return alert("Select an application first.");
-    setViewerOpen(true);
-  }
+  // Compute current page slice
+  const total = filtered.length;
+  const totalPages = Math.max(1, Math.ceil(total / pageSize));
+  const clampedPage = Math.min(page, totalPages);
+  const startIdx = (clampedPage - 1) * pageSize;
+  const endIdx = Math.min(startIdx + pageSize, total);
+  const paged = filtered.slice(startIdx, endIdx);
 
-  const selectedRow = rows.find((r) => r.id === selected);
+  // Selected row reference (prefer what’s visible; fallback to anywhere in filtered)
+  const selected =
+    paged.find((r) => r.id === selectedId) ||
+    filtered.find((r) => r.id === selectedId) ||
+    null;
+
+  const canAct = Boolean(selectedId);
+
+  const onRowClick = (id) => {
+    setSelectedId((prev) => (prev === id ? null : id));
+  };
+
+  const onApprove = () => {
+    if (!selectedId) return;
+    approve(selectedId);
+    // keep selection; page will auto-jump via useEffect below
+  };
+
+  const onReject = () => {
+    if (!selectedId) return;
+    reject(selectedId);
+    // keep selection; page will auto-jump via useEffect below
+  };
+
+  const goTo = (p) => setPage(Math.min(Math.max(1, p), totalPages));
+
+  // ✅ Auto-jump to the page that contains the selected row whenever data/search/pagesize change
+  useEffect(() => {
+    if (!selectedId) return;
+    const idxInFiltered = filtered.findIndex((a) => a.id === selectedId);
+    if (idxInFiltered === -1) return; // filtered out by search
+    const targetPage = Math.floor(idxInFiltered / pageSize) + 1;
+    if (targetPage !== page) {
+      setPage(targetPage);
+    }
+  }, [filtered, selectedId, pageSize, page]);
+
+  const renderPageNumbers = () => {
+    const windowSize = 5;
+    let start = Math.max(1, clampedPage - Math.floor(windowSize / 2));
+    let end = Math.min(totalPages, start + windowSize - 1);
+    start = Math.max(1, end - windowSize + 1);
+
+    const nums = [];
+    for (let i = start; i <= end; i++) {
+      nums.push(
+        <button
+          key={i}
+          className={`pager-btn ${i === clampedPage ? "is-current" : ""}`}
+          onClick={() => goTo(i)}
+          aria-current={i === clampedPage ? "page" : undefined}
+        >
+          {i}
+        </button>
+      );
+    }
+    return nums;
+  };
 
   return (
     <div className="card">
-      <h2 className="section-title">Application Requests</h2>
+      <div className="card-header">
+        <h2>Application Requests</h2>
+
+        <div className="searchbar-wrap" style={{ gap: 8 }}>
+          <input
+            className="input"
+            placeholder="Search name, student no., email or status"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+          />
+          {/* Page size selector (defaults to 5) */}
+          <select
+            className="input"
+            value={pageSize}
+            onChange={(e) => setPageSize(Number(e.target.value))}
+            aria-label="Rows per page"
+            style={{ width: 110 }}
+          >
+            <option value={5}>5 / page</option>
+            <option value={10}>10 / page</option>
+            <option value={20}>20 / page</option>
+          </select>
+        </div>
+      </div>
 
       <div className="table-wrap">
-        <table className="data-table">
+        <table className="table">
           <thead>
             <tr>
-              <th>Name</th>
-              <th>Student no.</th>
-              <th>Email</th>
-              <th>Status</th>
-              <th style={{ width: 120 }}>Actions</th>
+              <th style={{ width: "28%" }}>Name</th>
+              <th style={{ width: "16%" }}>Student no.</th>
+              <th style={{ width: "28%" }}>Email</th>
+              <th style={{ width: "12%" }}>Status</th>
+              <th style={{ width: "16%" }}>Actions</th>
             </tr>
           </thead>
           <tbody>
-            {rows.length === 0 && (
+            {paged.length === 0 ? (
               <tr>
-                <td colSpan={5} style={{ textAlign: "center", padding: 18 }}>
-                  No applications.
+                <td colSpan={5} style={{ textAlign: "center", padding: "24px" }}>
+                  {total === 0 ? "No application requests found." : "No results on this page."}
                 </td>
               </tr>
+            ) : (
+              paged.map((r) => {
+                const isSelected = r.id === selectedId;
+                return (
+                  <tr
+                    key={r.id}
+                    className={`clickable ${isSelected ? "row-selected" : ""}`}
+                    onClick={() => onRowClick(r.id)}
+                  >
+                    <td>{r.name}</td>
+                    <td>{r.studentNo || "—"}</td>
+                    <td>{r.email}</td>
+                    <td>
+                      {r.status === "Approved" && (
+                        <span className="badge badge-success">Approved</span>
+                      )}
+                      {r.status === "Rejected" && (
+                        <span className="badge badge-danger">Rejected</span>
+                      )}
+                      {r.status !== "Approved" && r.status !== "Rejected" && (
+                        <span className="badge">Pending</span>
+                      )}
+                    </td>
+                    <td>
+                      <div className="btn-row">
+                        <button
+                          className="btn"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            approve(r.id);
+                            setSelectedId(r.id); // keep selection
+                          }}
+                        >
+                          Approve
+                        </button>
+                        <button
+                          className="btn"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            reject(r.id);
+                            setSelectedId(r.id); // keep selection
+                          }}
+                        >
+                          Reject
+                        </button>
+                        <button
+                          className="btn"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            if (r.idAttachment) {
+                              window.open(r.idAttachment, "_blank", "noopener");
+                            } else {
+                              alert("No ID attachment for this applicant.");
+                            }
+                          }}
+                        >
+                          View ID
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })
             )}
-            {rows.map((r) => (
-              <tr
-                key={r.id}
-                className={selected === r.id ? "is-selected" : ""}
-                onClick={() => onRowClick(r.id)}
-              >
-                <td>{r.name}</td>
-                <td>{r.studentNo}</td>
-                <td>{r.email}</td>
-                <td>
-                  <StatusBadge status={r.status} />
-                </td>
-                <td>
-                  <div className="row-actions">
-                    <button
-                      className="btn-xs"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        approve(r.id);
-                      }}
-                    >
-                      Approve
-                    </button>
-                    <button
-                      className="btn-xs"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        reject(r.id);
-                      }}
-                    >
-                      Reject
-                    </button>
-                    <button
-                      className="btn-xs"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setSelected(r.id);
-                        setViewerOpen(true);
-                      }}
-                    >
-                      View ID
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            ))}
           </tbody>
         </table>
       </div>
 
-      {/* Footer actions (no upload button) */}
-      <div className="apps-footer-actions">
-        <button className="btn pill" onClick={doApprove}>
-          Approve
-        </button>
-        <button className="btn pill" onClick={doReject}>
-          Reject
-        </button>
-        <button className="btn pill" onClick={openViewer}>
-          View ID (Attachment)
-        </button>
+      {/* Pagination bar */}
+      <div className="pager-bar">
+        <div className="pager-left">
+          <span className="muted">
+            Showing <strong>{total === 0 ? 0 : startIdx + 1}</strong>–<strong>{endIdx}</strong> of{" "}
+            <strong>{total}</strong>
+          </span>
+        </div>
+
+        <div className="pager-right">
+          <button className="pager-btn" onClick={() => goTo(1)} disabled={clampedPage === 1}>
+            « First
+          </button>
+          <button className="pager-btn" onClick={() => goTo(clampedPage - 1)} disabled={clampedPage === 1}>
+            ‹ Prev
+          </button>
+
+          {renderPageNumbers()}
+
+          <button className="pager-btn" onClick={() => goTo(clampedPage + 1)} disabled={clampedPage === totalPages}>
+            Next ›
+          </button>
+          <button className="pager-btn" onClick={() => goTo(totalPages)} disabled={clampedPage === totalPages}>
+            Last »
+          </button>
+        </div>
       </div>
 
-      {viewerOpen && (
-        <IdViewer onClose={() => setViewerOpen(false)} row={selectedRow} />
-      )}
-    </div>
-  );
-}
-
-function StatusBadge({ status }) {
-  const map = {
-    Approved: { bg: "#daf5d7", bd: "#b7e3b2", fg: "#2d6a2d" },
-    Rejected: { bg: "#fde4e4", bd: "#f2c0c0", fg: "#8b1d1d" },
-    Pending: { bg: "#eef2f6", bd: "#d7dee5", fg: "#374151" },
-  };
-  const s = map[status] || map.Pending;
-  return (
-    <span
-      style={{
-        background: s.bg,
-        color: s.fg,
-        border: `1px solid ${s.bd}`,
-        borderRadius: 999,
-        padding: "2px 10px",
-        fontSize: 13,
-      }}
-    >
-      {status}
-    </span>
-  );
-}
-
-function IdViewer({ row, onClose }) {
-  if (!row) return null;
-  const dataUrl = row.idAttachment;
-
-  return (
-    <div className="modal-backdrop" onClick={onClose}>
-      <div className="modal-card" onClick={(e) => e.stopPropagation()}>
-        <div className="modal-head">
-          <h3>{row.name} — ID Attachment</h3>
-          <button className="modal-close" onClick={onClose} aria-label="Close">
-            ×
-          </button>
-        </div>
-        <div className="modal-body">
-          {!dataUrl && <p>No attachment uploaded yet.</p>}
-
-          {dataUrl && dataUrl.startsWith("data:image") && (
-            <img
-              src={dataUrl}
-              alt="ID Attachment"
-              style={{
-                maxWidth: "100%",
-                borderRadius: 10,
-                border: "1px solid #e2e6ea",
-              }}
-            />
-          )}
-
-          {dataUrl && dataUrl.startsWith("data:application/pdf") && (
-            <iframe
-              title="ID PDF"
-              src={dataUrl}
-              style={{
-                width: "100%",
-                height: 480,
-                border: "1px solid #e2e6ea",
-                borderRadius: 10,
-              }}
-            />
-          )}
-        </div>
-
-        <div className="actions-centered">
-          <button className="btn-pill cancel" onClick={onClose}>
-            Close
-          </button>
+      <div className="form-actions">
+        <button className="btn" disabled={!canAct} onClick={onApprove}>
+          Approve
+        </button>
+        <button className="btn" disabled={!canAct} onClick={onReject}>
+          Reject
+        </button>
+        <button
+          className="btn"
+          disabled={!selected || !selected.idAttachment}
+          onClick={() =>
+            selected?.idAttachment && window.open(selected.idAttachment, "_blank", "noopener")
+          }
+        >
+          View ID (Attachment)
+        </button>
+        <div className="muted" style={{ marginLeft: "auto" }}>
+          {selected ? `Selected: ${selected.name} (${selected.status})` : "No selection"}
         </div>
       </div>
     </div>
